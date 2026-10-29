@@ -1,15 +1,15 @@
 """Task 1 training: Full FT, Full FT + L2-SP, LoRA (r=4/16), OPLoRA (r=16, k=128) on MetaMathQA.
   python -m task1.train --config configs/task1.yaml --method lora16 --out results/task1/lora16 [--resume]
 """
-import argparse, math, os, time
+import argparse, json, math, os, time
 import numpy as np
 import torch
 import torch.nn.functional as F
 import yaml
 
 from common import lora as L
-from common.utils import (seed_everything, save_json, append_jsonl, get_device, count_params, path_size_bytes,
-                          peak_mem_gb, reset_peak_mem)
+from common.utils import (seed_everything, save_json, load_json, append_jsonl, read_jsonl, get_device, count_params,
+                          path_size_bytes, peak_mem_gb, reset_peak_mem)
 from .data import collate
 
 
@@ -57,6 +57,23 @@ def omega_penalty(model, ref):
     tot = 0.0
     for n, p in model.named_parameters():
         tot = tot + 0.5 * (p.float() - ref[n]).pow(2).sum()
+    return tot
+
+
+@torch.no_grad()
+def omega_add_grad(model, ref, lam, grad_mult):
+    """Same objective as omega_penalty, without building an autograd graph (saves ~2.4 GB on a T4).
+    Returns Omega = 0.5 * sum (theta - theta0)^2 and adds d(lam*Omega)/dtheta = lam*(theta - theta0), times the
+    GradScaler scale (grads are still scaled at this point), to p.grad. Mathematically identical to
+    scaler.scale(lam * omega_penalty).backward()."""
+    tot = 0.0
+    for n, p in model.named_parameters():
+        d = p.detach().float() - ref[n]
+        tot = tot + 0.5 * d.pow(2).sum()
+        if p.grad is None:
+            p.grad = (d * (lam * grad_mult)).to(p.dtype)
+        else:
+            p.grad.add_(d, alpha=lam * grad_mult)
     return tot
 
 
@@ -116,6 +133,11 @@ def train(cfg, model=None, tokenizer=None, data=None):
     stream = iter(torch.utils.data.DataLoader(data[start * ex_per_update:], batch_size=cfg["micro_bs"], shuffle=False,
                                               collate_fn=lambda b: collate(b, pad_id)))   # source order, no shuffling
     log_path = os.path.join(out, "train_log.jsonl")
+    prev_summary = load_json(os.path.join(out, "summary.json")) if (start and os.path.exists(os.path.join(out, "summary.json"))) else {}
+    if start and os.path.exists(log_path):
+        kept = [r for r in read_jsonl(log_path) if r["update"] <= start]
+        with open(log_path, "w") as f:
+            for r in kept: f.write(json.dumps(r) + "\n")
     reset_peak_mem(); t_train = 0.0; t_ckpt = 0.0
     for u in range(start, total):
         t0 = time.perf_counter()
@@ -129,8 +151,7 @@ def train(cfg, model=None, tokenizer=None, data=None):
             scaler.scale(loss).backward(); sft += loss.item()
         rec = {"update": u + 1, "sft_loss": sft, "lr": sched.get_last_lr()[0], "examples_seen": (u + 1) * ex_per_update}
         if kind == "full" and cfg["lam"] > 0:
-            om = omega_penalty(model, ref)
-            scaler.scale(cfg["lam"] * om).backward()
+            om = omega_add_grad(model, ref, cfg["lam"], scaler.get_scale())
             rec.update(omega=om.item(), lam_omega=cfg["lam"] * om.item(), total_loss=sft + cfg["lam"] * om.item())
         scaler.unscale_(opt)
         rec["grad_norm"] = float(torch.nn.utils.clip_grad_norm_(trainable, cfg["clip"]))
@@ -142,12 +163,20 @@ def train(cfg, model=None, tokenizer=None, data=None):
         sched.step(); opt.zero_grad(set_to_none=True)
         if dev.type == "cuda": torch.cuda.synchronize()
         t_train += time.perf_counter() - t0
+        rec["time_s"] = time.perf_counter() - t0
         append_jsonl(log_path, rec)
         if (u + 1) in ck_updates:
             t1 = time.perf_counter()
             save_ckpts(cfg, model, opt, sched, scaler, u + 1, ref, summary)
             t_ckpt += time.perf_counter() - t1
-    summary.update(train_time_s=t_train, ckpt_time_s=t_ckpt, peak_mem_gb=peak_mem_gb())
+    recs = read_jsonl(log_path)
+    ov = dict(prev_summary.get("overhead") or {}); sess_ov = summary.get("overhead") or {}
+    if prev_summary and ov:
+        if "export_time_s" in sess_ov: ov["export_time_s"] = ov.get("export_time_s", 0) + sess_ov["export_time_s"]
+        summary["overhead"] = ov
+    summary.update(train_time_s=sum(r.get("time_s", 0.0) for r in recs), ckpt_time_s=prev_summary.get("ckpt_time_s", 0.0) + t_ckpt,
+                   peak_mem_gb=max(peak_mem_gb(), prev_summary.get("peak_mem_gb", 0.0)),
+                   skipped_updates=[r["update"] for r in recs if r.get("skipped")], resumed_from=start or None)
     save_json(summary, os.path.join(out, "summary.json"))
     return model, summary
 
