@@ -1,0 +1,14 @@
+torch>=2.3
+transformers>=4.51        # Qwen3 support (developed/smoke-tested with 5.x)
+datasets
+lm-eval>=0.4.9            # Task 1 benchmarks (gsm8k_cot, hellaswag, boolq, arc_easy)
+math-verify               # Task 3 MATH answer equivalence
+numpy
+pandas
+pyarrow
+scipy
+matplotlib
+pyyaml
+pillow
+torchvision               # default SigLIP image processor backend
+tqdm

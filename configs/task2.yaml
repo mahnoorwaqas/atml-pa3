@@ -1,0 +1,23 @@
+qwen_name: Qwen/Qwen3-0.6B
+siglip_name: google/siglip-base-patch16-224
+seed: 6304
+n_tokens: 196                  # 49 for the optional compression run
+micro_bs: 8
+accum: 2                       # effective batch 16
+weight_decay: 0.01
+clip: 1.0
+warmup_frac: 0.05
+lr_floor: 0.1                  # cosine decays to 10% of peak
+amp: true
+grad_checkpointing: true
+backbone_dtype: float16
+lora: {r: 16, alpha: 32, dropout: 0.05, targets: [q_proj, k_proj, v_proj, o_proj]}
+stages:                        # updates, connector peak LR, LoRA peak LR
+  - {updates: 2250, lr_conn: 1.0e-3, lr_lora: null}
+  - {updates: 1500, lr_conn: 1.0e-4, lr_lora: 2.0e-5}
+  - {updates: 750,  lr_conn: 5.0e-5, lr_lora: 1.0e-5}
+mix:                           # per-draw probabilities (each draw yields 2 examples)
+  stage2: {presence: 0.5, counting: 0.25, caption: 0.25}
+  stage3: {natural: 0.7, presence: 0.1, counting: 0.1, caption: 0.1}
+dev_every: 500
+ckpt_every: 250

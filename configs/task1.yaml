@@ -1,0 +1,24 @@
+# Task 1 shared settings (assignment spec).  Method-specific values live under `methods`.
+model_name: Qwen/Qwen3-0.6B
+data_path: results/task1/train_data.pt
+seed: 6304
+n_examples: 40000
+micro_bs: 2
+accum: 16                    # effective batch 32 -> 1250 updates
+betas: [0.9, 0.999]
+eps: 1.0e-8
+weight_decay: 0.01
+clip: 1.0
+warmup_frac: 0.03            # round-half-up(0.03*1250) = 38
+amp: true                    # FP16 autocast + dynamic GradScaler (CUDA only)
+backbone_dtype: float16      # adapter variants: frozen FP16 backbone (full FT uses FP32 master params)
+grad_checkpointing: true
+ckpt_fracs: [0.25, 0.5, 0.75, 1.0]      # -> updates 312, 625, 937, 1250
+lora_dropout: 0.05
+targets: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+methods:
+  full:   {kind: full,   lr: 2.0e-5, lam: 0.0}
+  l2sp:   {kind: full,   lr: 2.0e-5, lam: 1.0e-3}
+  lora4:  {kind: lora,   lr: 2.0e-4, r: 4,  alpha: 8}
+  lora16: {kind: lora,   lr: 2.0e-4, r: 16, alpha: 32}
+  oplora: {kind: oplora, lr: 2.0e-4, r: 16, alpha: 32, k: 128}
