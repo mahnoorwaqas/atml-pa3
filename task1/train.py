@@ -68,7 +68,7 @@ def omega_add_grad(model, ref, lam, grad_mult):
     scaler.scale(lam * omega_penalty).backward()."""
     tot = 0.0
     for n, p in model.named_parameters():
-        d = p.detach().float() - ref[n]
+        d = p.detach().float() - ref[n].to(p.device, non_blocking=True)     # stream theta_0 for this tensor only
         tot = tot + 0.5 * d.pow(2).sum()
         if p.grad is None:
             p.grad = (d * (lam * grad_mult)).to(p.dtype)
@@ -115,10 +115,10 @@ def train(cfg, model=None, tokenizer=None, data=None):
     ref = None
     if kind == "full":
         ref = {n: p.detach().clone().float() for n, p in model.named_parameters()}
-        if cfg["lam"] == 0:
-            ref = {n: v.cpu() for n, v in ref.items()}                  # only needed for displacement logging
-        else:
-            summary["overhead"] = {"reference_storage_bytes": sum(v.numel() * 4 for v in ref.values())}
+        ref = {n: v.cpu() for n, v in ref.items()}                      # theta_0 lives in CPU RAM (GPU memory is tight on a T4)
+        if cfg["lam"] != 0:
+            if torch.cuda.is_available(): ref = {n: v.pin_memory() for n, v in ref.items()}
+            summary["overhead"] = {"reference_storage_bytes": sum(v.numel() * 4 for v in ref.values()), "reference_location": "cpu_pinned"}
     summary["trainable_params"] = (count_params(model, True) if kind == "full" else L.adapter_param_count(model))
     summary["total_params"] = count_params(model)
     opt = torch.optim.AdamW([{**g, "weight_decay": cfg["weight_decay"] if g["weight_decay"] is None else g["weight_decay"]}
@@ -151,8 +151,9 @@ def train(cfg, model=None, tokenizer=None, data=None):
             scaler.scale(loss).backward(); sft += loss.item()
         rec = {"update": u + 1, "sft_loss": sft, "lr": sched.get_last_lr()[0], "examples_seen": (u + 1) * ex_per_update}
         if kind == "full" and cfg["lam"] > 0:
-            om = omega_add_grad(model, ref, cfg["lam"], scaler.get_scale())
-            rec.update(omega=om.item(), lam_omega=cfg["lam"] * om.item(), total_loss=sft + cfg["lam"] * om.item())
+            t_om = time.perf_counter()
+            om = omega_add_grad(model, ref, cfg["lam"], scaler.get_scale()); om_v = om.item()
+            rec.update(omega=om_v, lam_omega=cfg["lam"] * om_v, total_loss=sft + cfg["lam"] * om_v, omega_time_s=time.perf_counter() - t_om)
         scaler.unscale_(opt)
         rec["grad_norm"] = float(torch.nn.utils.clip_grad_norm_(trainable, cfg["clip"]))
         before = scaler.get_scale()
