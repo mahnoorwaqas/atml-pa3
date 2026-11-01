@@ -102,6 +102,7 @@ def train(cfg, ds, store, tok, out, qwen=None, resume=None):
     if start == 0 and 0 in dev_points:
         append_jsonl(os.path.join(out, "dev_log.jsonl"), {"update": 0, **dev_eval(model, ds, store)})
     lora_added, cur_stage = False, 0
+    grad_ok, bad_streak = False, 0                                   # connector-gradient check state
     model.train(); log_path = os.path.join(out, "train_log.jsonl")
     for u in range(start, total):
         st, s_step = stage_of(u, stages)
@@ -134,9 +135,17 @@ def train(cfg, ds, store, tok, out, qwen=None, resume=None):
             loss = nll.sum() / ex_per_update                                       # example-weighted over the effective batch
             scaler.scale(loss).backward(); tot += loss.item()
         scaler.unscale_(opt)
-        if u == start:                                                             # connector must receive gradients
-            gn = sum(p.grad.abs().sum().item() for p in model.connector.parameters() if p.grad is not None)
-            assert gn > 0, "no gradient reached the connector"
+        if not grad_ok:                                                            # connector must receive gradients
+            gs = [p.grad for p in model.connector.parameters() if p.grad is not None]
+            gn = sum(g.abs().sum().item() for g in gs) if gs else 0.0
+            print(f"[diag] update {u + 1}: loss={tot:.4f} connector_grad_abs_sum={gn} grads_present={len(gs)}/"
+                  f"{len(list(model.connector.parameters()))} scaler_scale={scaler.get_scale()}", flush=True)
+            if math.isfinite(gn):                                                  # non-finite grads = fp16 overflow: the scaler skips
+                assert gn > 0, "no gradient reached the connector (finite but all-zero or missing)"   # that step and lowers its scale
+                grad_ok = True
+            else:
+                bad_streak += 1
+                assert bad_streak <= 25, "connector gradients stayed non-finite for 25 updates"
         gnorm = float(torch.nn.utils.clip_grad_norm_(model.trainable(), cfg["clip"]))
         before = scaler.get_scale(); scaler.step(opt); scaler.update()
         if use_amp and scaler.get_scale() < before: summary["skipped_updates"].append(u + 1)
