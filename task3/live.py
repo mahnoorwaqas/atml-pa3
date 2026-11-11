@@ -5,7 +5,7 @@ Usage: python -m task3.live --model Qwen/Qwen2.5-3B-Instruct --revision <from RE
 import argparse, os, time
 import numpy as np
 
-from common.utils import SEED, save_json, append_jsonl, peak_mem_gb, reset_peak_mem
+from common.utils import SEED, save_json, append_jsonl, read_jsonl, peak_mem_gb, reset_peak_mem
 from . import answers as A
 
 SYSTEM = "You are a helpful assistant."
@@ -53,8 +53,13 @@ def run_live(model, tok, questions, out_dir, device, limits=(3072, 1024, 2048), 
     L_single, L_par, L_rev = limits
     os.makedirs(out_dir, exist_ok=True)
     reset_peak_mem()
-    recs = []
+    path = os.path.join(out_dir, "live_records.jsonl")
+    recs = read_jsonl(path) if os.path.exists(path) else []          # resume: questions already finished are kept
+    done = {r["qid"] for r in recs}
+    print(f"[live] {len(done)} of {len(questions)} questions already done", flush=True)
     for qi, q in enumerate(questions):
+        if q["qid"] in done:
+            continue
         base = [{"role": "system", "content": SYSTEM}, {"role": "user", "content": q["problem"] + PROBLEM_SEP + INSTR}]
         s0 = seed + 10 * qi
         single = generate(model, tok, base, L_single, s0 + 0, device)
@@ -65,7 +70,8 @@ def run_live(model, tok, questions, out_dir, device, limits=(3072, 1024, 2048), 
         sc_ans = sc_vote([p["answer"] for p in par])
         rec = dict(qid=q["qid"], gold=q["gold"], single=single, parallel=par, refine_initial=init, refine_revision=rev,
                    ans_single=single["answer"], ans_parallel=sc_ans, ans_init=init["answer"], ans_refine=rev["answer"])
-        recs.append(rec); append_jsonl(os.path.join(out_dir, "live_records.jsonl"), rec)
+        recs.append(rec); append_jsonl(path, rec)
+        print(f"[live] {len(recs)}/{len(questions)} done (qid {q['qid']})", flush=True)
     return summarize(recs, out_dir)
 
 
