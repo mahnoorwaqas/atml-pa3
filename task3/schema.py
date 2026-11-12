@@ -14,19 +14,19 @@ CANDIDATES = {
     # generations.parquet
     "text": ["text", "response", "generation", "generated_text", "output_text", "output"],
     "token_ids": ["token_ids", "generated_token_ids", "output_token_ids", "completion_token_ids", "tokens"],
-    "num_tokens": ["num_tokens", "length", "n_tokens", "num_generated_tokens", "generated_length", "gen_len",
+    "num_tokens": ["n_generated_text_tokens", "num_tokens", "length", "n_tokens", "num_generated_tokens", "generated_length", "gen_len",
                    "token_count", "output_len"],
     "pred": ["extracted_answer", "pred_answer", "predicted_answer", "pred", "extracted", "answer_pred", "prediction"],
     "gold": ["gold_answer", "gold", "ground_truth", "reference_answer", "target", "answer"],
-    "question": ["question", "problem", "prompt", "query"],
+    "question": ["question_text", "question", "problem", "prompt", "query"],
     # probability_metrics.parquet
     "logp": ["logp", "logprobs", "token_logp", "sampled_logp", "log_probs"],
     "kl": ["kl_u_p", "kl", "kl_uniform", "self_certainty_tokens"],
     # attention_metrics.parquet
-    "attn_image": ["attn_image", "image_attn", "image_attention", "image", "A_image", "image_total", "attn_img"],
-    "attn_prompt": ["attn_prompt", "prompt_attn", "prompt_attention", "prompt_text", "A_prompt", "prompt_total",
+    "attn_image": ["img_attn_total", "attn_image", "image_attn", "image_attention", "image", "A_image", "image_total", "attn_img"],
+    "attn_prompt": ["prompt_text_attn_total", "attn_prompt", "prompt_attn", "prompt_attention", "prompt_text", "A_prompt", "prompt_total",
                     "attn_prompt_text", "prompt_text_attn"],
-    "attn_gen": ["attn_gen", "generated_attn", "generated_attention", "generated_text", "A_generated",
+    "attn_gen": ["generated_text_attn_total", "attn_gen", "generated_attn", "generated_attention", "generated_text", "A_generated",
                  "generated_total", "attn_generated", "attn_generated_text", "generated_text_attn"],
 }
 

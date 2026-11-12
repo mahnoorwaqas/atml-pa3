@@ -45,7 +45,10 @@ class Pool:
 def _meta_for(meta, sid):
     if meta is None:
         return {}
-    return meta.get(str(sid), {}) if isinstance(meta, dict) else {}
+    if not isinstance(meta, dict):
+        return {}
+    s = str(sid)
+    return meta.get(s) or meta.get(s.split(":")[-1]) or {}
 
 
 def build_pools(df, kind, schema=None, meta=None):

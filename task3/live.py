@@ -12,7 +12,7 @@ SYSTEM = "You are a helpful assistant."
 INSTR = "Think step by step inside <think> </think> tags, then give your final answer inside \\boxed{}."
 REVIEW = ("Review the solution above. Identify and correct any errors; if it is correct, retain its answer. "
           "Give your final answer inside \\boxed{}.")
-PROBLEM_SEP = "\n"          # problem followed by INSTR; adjust to match the supplied README.MD exactly
+PROBLEM_SEP = "\n\n"        # problem followed by INSTR; adjust to match the supplied README.MD exactly
 GEN = dict(temperature=0.7, top_p=0.8, top_k=20, repetition_penalty=1.0)
 
 
