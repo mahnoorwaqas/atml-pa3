@@ -1,0 +1,4 @@
+{"update": 312, "sizes_bytes": {"model(raw adapter)": 40487193, "adapter(export)": 40490165, "train_state": 81084445}}
+{"update": 625, "sizes_bytes": {"model(raw adapter)": 40487193, "adapter(export)": 40490165, "train_state": 81084445}}
+{"update": 937, "sizes_bytes": {"model(raw adapter)": 40487193, "adapter(export)": 40490165, "train_state": 81084445}}
+{"update": 1250, "sizes_bytes": {"model(raw adapter)": 40487591, "adapter(export)": 40490563, "train_state": 81085629}}

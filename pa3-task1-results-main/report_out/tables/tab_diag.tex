@@ -1,0 +1,23 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{2.6pt}
+\caption{Weight-space and activation diagnostics for \texttt{down\_proj} ($k=128$). $\rho_k$: share of $\|\Delta W\|_F^2$ in the top-$k$ output subspace (random direction: $k/1024=0.125$). $\eta=\|\Delta W\|_F/\|W_0\|_F$ ($\times10^{-2}$). $R_\mathrm{m}$, $R_\mathrm{n}$: $\|\Delta W z\|/\|W_0 z\|$ ($\times10^{-2}$) on math / non-math probe prompts.}
+\label{tab:diag}
+\begin{tabular}{lcccccccccccc}
+\toprule
+ & \multicolumn{4}{c}{Layer 0} & \multicolumn{4}{c}{Layer 13} & \multicolumn{4}{c}{Layer 27} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}\cmidrule(lr){10-13}
+Model & $\rho_k$ & $\eta$ & $R_\mathrm{m}$ & $R_\mathrm{n}$ & $\rho_k$ & $\eta$ & $R_\mathrm{m}$ & $R_\mathrm{n}$ & $\rho_k$ & $\eta$ & $R_\mathrm{m}$ & $R_\mathrm{n}$ \\
+\midrule
+Full FT (\textonehalf{} ep.) & 0.132 & 1.31 & 5.10 & 2.58 & 0.148 & 1.54 & 5.42 & 3.04 & 0.116 & 1.24 & 2.01 & 2.81 \\
+Full FT & 0.132 & 1.36 & 5.26 & 2.66 & 0.148 & 1.60 & 5.47 & 3.10 & 0.115 & 1.29 & 2.01 & 2.83 \\
+Full FT + L2-SP & 0.131 & 1.11 & 4.50 & 2.24 & 0.150 & 1.37 & 4.57 & 2.78 & 0.107 & 0.78 & 1.88 & 2.54 \\
+LoRA-4 & 0.129 & 0.81 & 4.42 & 1.17 & 0.133 & 1.30 & 8.18 & 1.79 & 0.101 & 0.67 & 0.56 & 0.44 \\
+LoRA-16 & 0.127 & 1.45 & 6.30 & 1.94 & 0.154 & 1.91 & 8.03 & 2.72 & 0.108 & 1.12 & 1.07 & 1.35 \\
+OPLoRA-16 & $\approx 0$ & 1.48 & 7.79 & 2.02 & $\approx 0$ & 1.92 & 8.92 & 2.89 & $\approx 0$ & 0.92 & 1.15 & 1.70 \\
+\bottomrule
+\end{tabular}
+\\[2pt]
+\parbox{\linewidth}{\scriptsize OPLoRA: $\rho_k \leq 4.7\times10^{-8}$ in all three layers (numerical zero).}
+\end{table}

@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.0pt}
+\caption{Resource use over 1{,}250 updates. Ckpt: all files of the final recovery checkpoint (weights/adapters plus optimizer state). No updates were skipped by the gradient scaler in any run.}
+\label{tab:resources}
+\begin{tabular}{lcccccl}
+\toprule
+Run & Trainable (M) & Time (h) & Peak mem (GB) & Ckpt (GB) & $\|\theta-\theta_0\|_2$ (\textonehalf{} / 1 ep.) & Method overhead \\
+\midrule
+Full FT & 596.05 & 2.38 & 13.8 & 7.78 & 10.00 / 10.63 & -- \\
+Full FT + L2-SP & 596.05 & 2.38 & 13.8 & 7.78 & 6.42 / 6.26 & $\theta_0$ copy 2.4\,GB (pinned CPU) \\
+LoRA-4 & 2.52 & 2.89 & 4.7 & 0.04 & -- & -- \\
+LoRA-16 & 10.09 & 2.83 & 4.8 & 0.16 & -- & -- \\
+OPLoRA-16 & 10.09 & 3.93 & 5.1 & 0.16 & -- & bases 0.32\,GB; SVD 33\,s; export 0.5\,s \\
+\bottomrule
+\end{tabular}
+\end{table}

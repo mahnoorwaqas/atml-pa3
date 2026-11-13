@@ -1,0 +1,20 @@
+{
+  "per_question": {},
+  "summary": {
+    "n_questions_with_variation": 469,
+    "n_questions": 800,
+    "logp": {
+      "top_minus_bottom_quartile": 0.13406183368869937,
+      "mean_spearman_with_correct": 0.13449683447423968
+    },
+    "selfcert": {
+      "top_minus_bottom_quartile": 0.20495735607675905,
+      "mean_spearman_with_correct": 0.1988913740168272
+    },
+    "length_neg": {
+      "top_minus_bottom_quartile": 0.07809168443496801,
+      "mean_spearman_with_correct": 0.07685158503567308
+    },
+    "shortest_rollout_accuracy": 0.62625
+  }
+}

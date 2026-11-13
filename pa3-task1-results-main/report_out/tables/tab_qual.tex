@@ -1,0 +1,21 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.0pt}
+\caption{Qualitative prompts (24 = 8 questions $\times$ plain/JSON/template; greedy, 512-token cap). Math framing: response contains ``the answer is'', \texttt{\textbackslash boxed}, \texttt{\#\#\#\#} or \texttt{\$\$}. Valid JSON: parses after removing code fences. Repetition: mean fraction of repeated 4-grams on the 42 annotated responses. All flags are automatic, not manual annotations.}
+\label{tab:qual}
+\begin{tabular}{lccccc}
+\toprule
+Model & Truncated (/24) & Math framing (/24) & Valid JSON (/8) & Mean tokens & 4-gram rep.\ (42-subset) \\
+\midrule
+Baseline & 1 & 0 & 8 & 102 & 0.00 \\
+\midrule
+Full FT (\textonehalf{} ep.) & 4 & 11 & 3 & 174 & 0.33 \\
+Full FT & 3 & 14 & 3 & 145 & 0.06 \\
+Full FT + L2-SP & 5 & 11 & 3 & 173 & 0.03 \\
+LoRA-4 & 2 & 2 & 3 & 115 & 0.01 \\
+LoRA-16 & 3 & 6 & 3 & 146 & 0.13 \\
+OPLoRA-16 & 2 & 7 & 2 & 139 & 0.05 \\
+\bottomrule
+\end{tabular}
+\end{table}

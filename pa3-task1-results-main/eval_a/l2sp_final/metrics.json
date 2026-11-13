@@ -1,0 +1,22 @@
+{
+  "gsm8k_cot": {
+    "primary": 0.6459438968915845,
+    "primary_name": "exact_match,flexible-extract",
+    "exact_match,strict-match": 0.0,
+    "truncation_rate": 0.006065200909780136
+  },
+  "hellaswag": {
+    "primary": 0.4647480581557459,
+    "primary_name": "acc_norm,none",
+    "acc,none": 0.3752240589523999
+  },
+  "boolq": {
+    "primary": 0.6250764525993884,
+    "primary_name": "acc,none"
+  },
+  "arc_easy": {
+    "primary": 0.6258417508417509,
+    "primary_name": "acc_norm,none",
+    "acc,none": 0.6611952861952862
+  }
+}

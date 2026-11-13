@@ -1,0 +1,6 @@
+{
+  "rule": "median text-embedding norm / median connector-output norm on training batch",
+  "text_norm": 0.8891386985778809,
+  "connector_norm": 16.43817138671875,
+  "scale": 0.054089877754449844
+}

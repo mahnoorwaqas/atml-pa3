@@ -1,0 +1,146 @@
+{
+  "selection_gap": [
+    {
+      "qid": "test:1230",
+      "gold": "\\frac{5}{6}",
+      "pool_correct_frac": 0.40625,
+      "answers": [
+        "\\frac{1}{2}",
+        "\\frac{5}{6}",
+        "\\frac{1}{2}",
+        "\\frac{5}{6}",
+        "\\frac{1}{2}",
+        "\\frac{1}{2}",
+        "\\frac{5}{6}",
+        "\\frac{5}{6}"
+      ]
+    },
+    {
+      "qid": "test:1263",
+      "gold": "1024",
+      "pool_correct_frac": 0.21875,
+      "answers": [
+        "1024",
+        "1024",
+        "512",
+        "512",
+        "512",
+        "512",
+        "512",
+        "512"
+      ]
+    },
+    {
+      "qid": "test:1270",
+      "gold": "9",
+      "pool_correct_frac": 0.09375,
+      "answers": [
+        "60",
+        "9",
+        "9",
+        "280",
+        "9",
+        "540",
+        "6",
+        "540"
+      ]
+    }
+  ],
+  "rwc_fixes_sc": [
+    {
+      "qid": "test:1787",
+      "gold": "10\\;\\text{edges}",
+      "pool_correct_frac": 0.40625,
+      "answers": [
+        "10",
+        "10",
+        "10",
+        "12",
+        "12",
+        "12",
+        "12",
+        "12"
+      ]
+    },
+    {
+      "qid": "test:2010",
+      "gold": "102",
+      "pool_correct_frac": 0.28125,
+      "answers": [
+        "102",
+        "84",
+        "102",
+        "39",
+        "84",
+        "84",
+        "120",
+        "78"
+      ]
+    },
+    {
+      "qid": "test:2094",
+      "gold": "4\\sqrt{2} + 4",
+      "pool_correct_frac": 0.3125,
+      "answers": [
+        "4 + 4\\sqrt{2}",
+        "8",
+        "8",
+        "2 + 2\\sqrt{2}",
+        "8",
+        "4(\\sqrt{2} + 1)",
+        "4(\\sqrt{2} + 1)",
+        "4(\\sqrt{2} + 1)"
+      ]
+    }
+  ],
+  "premature_stop": [
+    {
+      "qid": "test:1011",
+      "gold": "89",
+      "pool_correct_frac": 0.84375,
+      "answers": [
+        "89",
+        "89",
+        "89",
+        "89",
+        "89",
+        "89",
+        "89",
+        "89"
+      ],
+      "n_orders_with_wrong_early_stop": 2
+    },
+    {
+      "qid": "test:1188",
+      "gold": "4",
+      "pool_correct_frac": 0.34375,
+      "answers": [
+        "2",
+        "5",
+        "16",
+        "4",
+        "4",
+        "4",
+        "4",
+        "4"
+      ],
+      "n_orders_with_wrong_early_stop": 1
+    },
+    {
+      "qid": "test:1398",
+      "gold": "\\frac{11}{16}",
+      "pool_correct_frac": 0.71875,
+      "answers": [
+        "1",
+        "\\frac{11}{16}",
+        "\\frac{11}{16}",
+        "\\frac{11}{16}",
+        "\\frac{11}{16}",
+        "\\frac{11}{16}",
+        "\\frac{11}{16}",
+        "1"
+      ],
+      "n_orders_with_wrong_early_stop": 1
+    }
+  ]
+}

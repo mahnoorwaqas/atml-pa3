@@ -1,0 +1,40 @@
+{
+  "per_question": {},
+  "summary": {
+    "n_questions_with_variation": 635,
+    "n_questions": 800,
+    "logp": {
+      "top_minus_bottom_quartile": 0.020866141732283464,
+      "mean_spearman_with_correct": 0.03005964647749028
+    },
+    "selfcert": {
+      "top_minus_bottom_quartile": 0.04468503937007874,
+      "mean_spearman_with_correct": 0.04863649896708964
+    },
+    "length_neg": {
+      "top_minus_bottom_quartile": 0.05137795275590551,
+      "mean_spearman_with_correct": 0.050681984600957776
+    },
+    "vision": {
+      "top_minus_bottom_quartile": 0.048425196850393704,
+      "mean_spearman_with_correct": 0.04170169958230518
+    },
+    "visconf": {
+      "top_minus_bottom_quartile": 0.09448818897637795,
+      "mean_spearman_with_correct": 0.09125089455569531
+    },
+    "token": {
+      "top_minus_bottom_quartile": 0.09173228346456692,
+      "mean_spearman_with_correct": 0.08231272012342868
+    },
+    "shortest_rollout_accuracy": 0.5375,
+    "conf_vision_corr": {
+      "mean": -0.21099388014225517,
+      "median": -0.21154463296936787,
+      "std": 0.1813940413702226,
+      "frac_negative": 0.89375,
+      "n_questions": 800
+    },
+    "fusion_identity_max_abs_err": 1.1912346109532734e-14
+  }
+}

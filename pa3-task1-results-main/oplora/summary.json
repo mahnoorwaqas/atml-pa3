@@ -1,0 +1,67 @@
+{
+  "method": "oplora",
+  "cfg": {
+    "model_name": "Qwen/Qwen3-0.6B",
+    "data_path": "results/task1/train_data.pt",
+    "seed": 6304,
+    "n_examples": 40000,
+    "micro_bs": 2,
+    "accum": 16,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.01,
+    "clip": 1.0,
+    "warmup_frac": 0.03,
+    "amp": true,
+    "backbone_dtype": "float16",
+    "grad_checkpointing": true,
+    "ckpt_fracs": [
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "lora_dropout": 0.05,
+    "targets": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "kind": "oplora",
+    "lr": 0.0002,
+    "r": 16,
+    "alpha": 32,
+    "k": 128,
+    "method": "oplora",
+    "out": "results/task1/oplora",
+    "resume": null
+  },
+  "total_updates": 1250,
+  "warmup": 38,
+  "ckpt_updates": [
+    312,
+    625,
+    937,
+    1250
+  ],
+  "skipped_updates": [],
+  "overhead": {
+    "svd_time_s": 33.18647410200356,
+    "basis_bytes": 322961408,
+    "n_modules": 196,
+    "export_time_s": 0.484449487994425
+  },
+  "trainable_params": 10092544,
+  "total_params": 606142464,
+  "train_time_s": 14152.120236788931,
+  "ckpt_time_s": 1.4850856990087777,
+  "peak_mem_gb": 5.134768962860107,
+  "resumed_from": null
+}

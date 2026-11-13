@@ -1,0 +1,113 @@
+{
+  "cfg": {
+    "qwen_name": "Qwen/Qwen3-0.6B",
+    "siglip_name": "google/siglip-base-patch16-224",
+    "seed": 6304,
+    "n_tokens": 196,
+    "micro_bs": 8,
+    "accum": 2,
+    "weight_decay": 0.01,
+    "clip": 1.0,
+    "warmup_frac": 0.05,
+    "lr_floor": 0.1,
+    "amp": true,
+    "grad_checkpointing": true,
+    "backbone_dtype": "float16",
+    "lora": {
+      "r": 16,
+      "alpha": 32,
+      "dropout": 0.05,
+      "targets": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj"
+      ]
+    },
+    "stages": [
+      {
+        "updates": 2250,
+        "lr_conn": 0.001,
+        "lr_lora": null
+      },
+      {
+        "updates": 1500,
+        "lr_conn": 0.0001,
+        "lr_lora": 2e-05
+      },
+      {
+        "updates": 750,
+        "lr_conn": 5e-05,
+        "lr_lora": 1e-05
+      }
+    ],
+    "mix": {
+      "stage2": {
+        "presence": 0.5,
+        "counting": 0.25,
+        "caption": 0.25
+      },
+      "stage3": {
+        "natural": 0.7,
+        "presence": 0.1,
+        "counting": 0.1,
+        "caption": 0.1
+      }
+    },
+    "dev_every": 500,
+    "ckpt_every": 250
+  },
+  "calibration": {
+    "rule": "median text-embedding norm / median connector-output norm on training batch",
+    "text_norm": 0.8891386985778809,
+    "connector_norm": 16.43817138671875,
+    "scale": 0.054089877754449844
+  },
+  "stage_time_s": {
+    "1": 3015.0018770429997,
+    "2": 2371.912450299,
+    "3": 1189.7691575070003
+  },
+  "trainable_by_stage": {
+    "1": 1837056,
+    "2": 6424576,
+    "3": 6424576
+  },
+  "stage_peak_mem_gb": {
+    "1": 5.01059103012085,
+    "2": 5.061892986297607,
+    "3": 4.6304850578308105
+  },
+  "skipped_updates": [
+    1,
+    2,
+    3,
+    4,
+    4255
+  ],
+  "final_ckpt_sizes": {
+    "ckpt_u4000.pt": 77363554,
+    "ckpt_u1750.pt": 40473090,
+    "connector_stage3.pt": 7350903,
+    "ckpt_u4250.pt": 77363554,
+    "ckpt_u3000.pt": 77363554,
+    "ckpt_u750.pt": 40472843,
+    "ckpt_u2500.pt": 77363554,
+    "adapters_stage2.pt": 18418479,
+    "ckpt_u3250.pt": 77363554,
+    "ckpt_u3500.pt": 77363554,
+    "ckpt_u2750.pt": 77363554,
+    "ckpt_u1000.pt": 40473090,
+    "ckpt_u2000.pt": 40473090,
+    "adapters_stage3.pt": 18418479,
+    "ckpt_u2250.pt": 40473090,
+    "connector_stage2.pt": 7350903,
+    "ckpt_u4500.pt": 77363554,
+    "ckpt_u1250.pt": 40473090,
+    "ckpt_u3750.pt": 77363554,
+    "ckpt_u500.pt": 40472843,
+    "ckpt_u1500.pt": 40473090,
+    "connector_stage1.pt": 7350903,
+    "ckpt_u250.pt": 40472843
+  }
+}

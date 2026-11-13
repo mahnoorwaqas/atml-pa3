@@ -1,0 +1,8 @@
+{
+  "scorer": "math-verify==0.9.0",
+  "misaligned_rows": 0,
+  "n_questions": 1000,
+  "seed": 6304,
+  "n_dev": 200,
+  "n_eval": 800
+}

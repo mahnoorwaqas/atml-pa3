@@ -1,0 +1,4 @@
+{"update": 312, "sizes_bytes": {"model": 3006629384, "train_state": 4768677777}, "displacement_l2": 5.654695407348295}
+{"update": 625, "sizes_bytes": {"model": 3006629384, "train_state": 4768677777}, "displacement_l2": 6.42432978775233}
+{"update": 937, "sizes_bytes": {"model": 3006629384, "train_state": 4768677777}, "displacement_l2": 6.320449366741052}
+{"update": 1250, "sizes_bytes": {"model": 3006629701, "train_state": 4768678715}, "displacement_l2": 6.257829386579923}
